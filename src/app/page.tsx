@@ -22,6 +22,8 @@ import {
   Loader2,
   Zap,
   GripVertical,
+  Globe,
+  Scale,
 } from "lucide-react";
 
 /* ─── Types ─── */
@@ -352,6 +354,111 @@ function PhaseIndicator({ phase }: { phase: AgenticTrace["phase"] }) {
   );
 }
 
+interface ContentSection {
+  type: "assessment" | "earth-parallel" | "tension" | "text";
+  content: string;
+}
+
+function parseStructuredContent(raw: string): ContentSection[] {
+  const sections: ContentSection[] = [];
+  const sectionRegex = /:::(assessment|earth-parallel|tension)\s*\n?([\s\S]*?)(?=:::|$)/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = sectionRegex.exec(raw)) !== null) {
+    // Capture any text before this section
+    const before = raw.slice(lastIndex, match.index).trim();
+    if (before) {
+      sections.push({ type: "text", content: before });
+    }
+    sections.push({
+      type: match[1] as ContentSection["type"],
+      content: match[2].trim(),
+    });
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Capture any remaining text
+  const remaining = raw.slice(lastIndex).trim();
+  if (remaining) {
+    sections.push({ type: "text", content: remaining });
+  }
+
+  return sections.length > 0 ? sections : [{ type: "text", content: raw }];
+}
+
+function EarthParallelBlock({ content }: { content: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="rounded-lg border border-red-500/12 bg-red-500/[0.03] overflow-hidden"
+    >
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-red-500/8">
+        <Globe size={12} className="text-red-400/50" />
+        <span className="text-[9px] tracking-[0.1em] uppercase text-red-400/50">
+          Earth Historical Parallel
+        </span>
+      </div>
+      <div className="px-3 py-2.5 vault-prose text-[12px] leading-[1.75] text-red-200/45">
+        <Markdown>{content}</Markdown>
+      </div>
+    </motion.div>
+  );
+}
+
+function TensionBlock({ content }: { content: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="rounded-lg border border-violet-500/12 bg-violet-500/[0.03] overflow-hidden"
+    >
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-violet-500/8">
+        <Scale size={12} className="text-violet-400/50" />
+        <span className="text-[9px] tracking-[0.1em] uppercase text-violet-400/50">
+          Tension — Collective Safety vs. Individual Freedom
+        </span>
+      </div>
+      <div className="px-3 py-2.5 vault-prose text-[12px] leading-[1.75] text-violet-200/45">
+        <Markdown>{content}</Markdown>
+      </div>
+    </motion.div>
+  );
+}
+
+function StructuredContent({ content }: { content: string }) {
+  const sections = parseStructuredContent(content);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="space-y-3"
+    >
+      {sections.map((section, i) => {
+        switch (section.type) {
+          case "earth-parallel":
+            return <EarthParallelBlock key={i} content={section.content} />;
+          case "tension":
+            return <TensionBlock key={i} content={section.content} />;
+          case "assessment":
+          case "text":
+          default:
+            return (
+              <div
+                key={i}
+                className="vault-prose text-[13px] leading-[1.8] text-emerald-100/70"
+              >
+                <Markdown>{section.content}</Markdown>
+              </div>
+            );
+        }
+      })}
+    </motion.div>
+  );
+}
+
 function AssistantMessage({ message }: { message: Message }) {
   const trace = message.trace;
 
@@ -378,15 +485,7 @@ function AssistantMessage({ message }: { message: Message }) {
         </div>
       )}
 
-      {message.content && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="vault-prose text-[13px] leading-[1.8] text-emerald-100/70"
-        >
-          <Markdown>{message.content}</Markdown>
-        </motion.div>
-      )}
+      {message.content && <StructuredContent content={message.content} />}
 
       {trace?.phase !== "complete" && trace?.phase !== "error" && trace?.phase !== "idle" && !message.content && (
         <div className="flex items-center gap-1.5 py-1">
