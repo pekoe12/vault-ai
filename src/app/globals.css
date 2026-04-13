@@ -1,0 +1,209 @@
+@import "tailwindcss";
+
+:root {
+  --background: #050b09;
+  --foreground: #d1fae5;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+/* ─── Base ─── */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Font Classes ─── */
+h1, h2, h3, h4, h5, h6,
+.font-serif {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-weight: 400;
+}
+
+code, pre, kbd, samp,
+.font-mono,
+[class*="tracking-["],
+[class*="uppercase"] {
+  font-family: "DM Mono", ui-monospace, "Cascadia Mono", monospace;
+}
+
+textarea, input, button {
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-weight: 300;
+}
+
+/* ─── Scrollbar ─── */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 3px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.08);
+  border-radius: 999px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.2);
+}
+
+/* ─── Animations ─── */
+.scan-line {
+  animation: scanPulse 3s ease-in-out infinite;
+}
+@keyframes scanPulse {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.6; }
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #34d399;
+  display: inline-block;
+  animation: dotPulse 2.5s ease-in-out infinite;
+  box-shadow: 0 0 6px rgba(52, 211, 153, 0.3);
+}
+@keyframes dotPulse {
+  0%, 100% { box-shadow: 0 0 3px rgba(52, 211, 153, 0.2); opacity: 0.7; }
+  50% { box-shadow: 0 0 10px rgba(52, 211, 153, 0.5); opacity: 1; }
+}
+
+.input-glow:focus-within {
+  box-shadow:
+    0 0 30px rgba(16, 185, 129, 0.04),
+    inset 0 0 30px rgba(16, 185, 129, 0.015);
+}
+
+.vault-logo {
+  filter: drop-shadow(0 0 30px rgba(16, 185, 129, 0.1));
+}
+
+.ship-status-bar {
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.02) 0%, transparent 100%);
+}
+
+.hex-grid-bg {
+  animation: hexDrift 60s linear infinite;
+}
+@keyframes hexDrift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-56px, -100px); }
+}
+
+/* ─── Reasoning block ─── */
+.reasoning-block {
+  backdrop-filter: blur(8px);
+}
+
+/* ─── Tool call blocks ─── */
+.tool-call-block {
+  backdrop-filter: blur(4px);
+}
+
+/* ─── Markdown Prose ─── */
+.vault-prose h1,
+.vault-prose h2,
+.vault-prose h3,
+.vault-prose h4 {
+  font-family: "Instrument Serif", Georgia, serif;
+  color: rgba(209, 250, 229, 0.85);
+  margin-top: 1.2em;
+  margin-bottom: 0.4em;
+  font-weight: 400;
+}
+.vault-prose h1 { font-size: 1.3em; }
+.vault-prose h2 { font-size: 1.15em; }
+.vault-prose h3 { font-size: 1.05em; }
+.vault-prose h4 { font-size: 1em; color: rgba(167, 243, 208, 0.6); }
+
+.vault-prose p {
+  margin-bottom: 0.8em;
+}
+.vault-prose p:last-child {
+  margin-bottom: 0;
+}
+
+.vault-prose strong {
+  color: rgba(209, 250, 229, 0.9);
+  font-weight: 500;
+}
+.vault-prose em {
+  color: rgba(167, 243, 208, 0.6);
+  font-style: italic;
+}
+
+.vault-prose ul,
+.vault-prose ol {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+.vault-prose li {
+  margin-bottom: 0.3em;
+}
+.vault-prose li::marker {
+  color: rgba(52, 211, 153, 0.3);
+}
+
+.vault-prose code {
+  font-family: "DM Mono", ui-monospace, monospace;
+  font-size: 0.9em;
+  background: rgba(16, 185, 129, 0.06);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  border-radius: 3px;
+  padding: 0.15em 0.35em;
+  color: rgba(167, 243, 208, 0.7);
+}
+
+.vault-prose pre {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(16, 185, 129, 0.08);
+  border-radius: 6px;
+  padding: 0.8em 1em;
+  margin: 0.8em 0;
+  overflow-x: auto;
+}
+.vault-prose pre code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.vault-prose blockquote {
+  border-left: 2px solid rgba(16, 185, 129, 0.2);
+  padding-left: 1em;
+  margin: 0.8em 0;
+  color: rgba(167, 243, 208, 0.5);
+  font-style: italic;
+}
+
+.vault-prose hr {
+  border: none;
+  height: 1px;
+  background: rgba(16, 185, 129, 0.1);
+  margin: 1.2em 0;
+}
+
+.vault-prose a {
+  color: rgba(52, 211, 153, 0.7);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ─── Selection ─── */
+::selection {
+  background: rgba(16, 185, 129, 0.2);
+  color: #ecfdf5;
+}
+
+html {
+  scroll-behavior: smooth;
+}
